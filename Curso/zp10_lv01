@@ -1,0 +1,121 @@
+*&---------------------------------------------------------------------*
+*& Report  ZP10_LV01
+*&
+*&---------------------------------------------------------------------*
+*&
+*&
+*&---------------------------------------------------------------------*
+
+REPORT ZP10_LV01 MESSAGE-ID ZCM10.
+
+*---------------------------------------
+*Declarações :
+* Declaração de tabela
+TABLES: vbak. "Documento de vendas - tabela do proprio SAP - usar de exemplo
+
+* Declaracao de types - filtrando tabela - selecionando itens das tabelas
+TYPES:
+      BEGIN OF ty_vbak,
+         vbeln type vbak-vbeln,
+         vkorg type vbak-vkorg,
+         kunnr TYPE vbak-kunnr,
+         erdat TYPE vbak-erdat,
+      end of ty_vbak.
+
+* Estrutura / workarea / header-line
+data: wa_vbak TYPE ty_vbak.
+
+*Declaracao de tabela INTERNA - nome da 2° tabela - variacel vazia que vai armazenar td a tabela - 'loop at'
+DATA: ti_vbak type standard TABLE OF ty_vbak.
+
+* Declaracao de uma variavel vazia
+DATA: v_quant TYPE i.
+*--------------------------------------
+
+*--------------------------------------
+* Tela - seleiono os tres campos
+SELECTION-SCREEN BEGIN OF block b01 WITH FRAME TITLE text-001.
+"so_ - começo
+  "vbak- - até
+  SELECT-OPTIONS: so_vbeln for vbak-vbeln,
+                  so_erdat for vbak-erdat,
+                  so_vkorg for vbak-vkorg.
+
+ SELECTION-SCREEN end of BLOCK b01.
+*--------------------------------------
+
+*-------------------------------------
+* Criando classes - repartição - deixando o codigo mais bonito
+ start-of-SELECTION.
+
+    PERFORM acessa_dados.
+
+    PERFORM mostra_dados.
+
+ end-of-SELECTION.
+*------------------------------------
+
+
+
+*&---------------------------------------------------------------------*
+*&      Form  ACESSA_DADOS
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+* Configurar se nenbum campo for prenchido, lendo oque foi posto
+form acessa_dados .
+
+
+  " Ler a tabela do banco
+  select vbeln vkorg kunnr erdat
+    into TABLE ti_vbak
+    from vbak
+    where vbeln in so_vbeln and
+          erdat in so_erdat and
+          vkorg in so_vkorg.
+
+    if sy-subrc ne 0.
+      message i000 with 'Ordem de Vendas (VBAK)'.
+      stop.
+    ENDIF.
+
+endform.                    " ACESSA_DADOS
+
+
+
+*&---------------------------------------------------------------------*
+*&      Form  MOSTRA_DADOS
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+*Vai config dos dados - TELA da consulta - segunda tela - aonde organiza os dados
+
+form mostra_dados .
+
+  FORMAT INTENSIFIED off.
+  WRITE: / 'Ordem Venda', 15 'Org.', 25 'Cliente', 40 'Data', 52 'Organização'.
+  uline.
+
+  loop at ti_vbak INTO wa_vbak.
+
+    WRITE: / wa_vbak-vbeln,    sy-vline,
+           15 wa_vbak-vkorg,   sy-vline,
+           25 wa_vbak-kunnr,   sy-vline,
+           40 wa_vbak-erdat,   sy-vline,
+           60 wa_vbak-vkorg,   sy-vline.
+
+
+    v_quant = v_quant + 1.
+ endloop.
+
+ uline.
+
+ WRITE: / 'Form Listado(s):', v_quant, 'Pedidos'.
+
+endform.                    " MOSTRA_DADOS

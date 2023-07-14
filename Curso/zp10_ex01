@@ -1,0 +1,30 @@
+*&---------------------------------------------------------------------*
+*& Report  ZP10_EX01
+*&
+*&---------------------------------------------------------------------*
+*&
+*&
+*&---------------------------------------------------------------------*
+
+REPORT ZP10_EX01.
+
+WRITE: / 'Meu primeiro programa',
+         'no curso Abap'. "a barra pula uma linha de cima - se colocar um numero do lado vai mudar a coluna
+
+skip. "Pula uma linha
+
+WRITE: / 'Estou na linha 3'."uma barra so pula uma liha
+
+WRITE: /20 'Escrevendo a partir da coluna 20'. "pula 20 colunas - e 1 linha
+
+* comando abaixo, vai escrever na coluna 30 com elemento texto e por data servidor
+WRITE: /30 text-001, sy-datum.
+
+WRITE: / text-002, sy-uname. "login
+
+uline. "linha horizontal
+
+WRITE: / 'Fim do programa'.
+
+skip 2. "pula 2 linha
+uline 10(30). "começa na coluna 10 e fasz risco de 30 e para

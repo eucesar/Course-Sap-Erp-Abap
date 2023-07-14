@@ -1,0 +1,98 @@
+*&---------------------------------------------------------------------*
+*& Report  ZP10_CURSO
+*&
+*&---------------------------------------------------------------------*
+*&
+*&
+*&---------------------------------------------------------------------*
+
+REPORT ZP10_CURSO.
+
+*---------------------------
+*telas de selecao - 1° tabela
+
+*--------------------------
+*primeira tabela - escrever
+SELECTION-SCREEN BEGIN OF block b01 WITH FRAME TITLE text-001.
+
+PARAMETERS: p_aluno(50) TYPE c OBLIGATORY, "vai armazenar na variavel quando o usuario colocar
+            p_curso(30) TYPE c OBLIGATORY DEFAULT 'Acadeia Abap'.
+
+SELECTION-SCREEN end of BLOCK b01.
+*-------------------------
+
+
+*--------------------------
+*segunda tela - selecionar btns
+SELECTION-SCREEN BEGIN OF BLOCK b02 WITH FRAME TITLE text-002.
+
+*parametro radiobutton - bolinha redonda para selecionar - tem que AGRUPAR - GROUP
+  PARAMETERS: p_apr RADIOBUTTON GROUP g1,
+              p_rep RADIOBUTTON GROUP g1 DEFAULT 'X'. "significa que já vai vir com esse parametro marcado - o 'x' tem q ser em maisculo - acostumar com isso
+
+SELECTION-SCREEN end of BLOCK b02.
+*--------------------------
+
+
+*-------------------------
+*parametros fora - do 'selection-screnn'
+PARAMETERS : p_log as CHECKBOX DEFAULT 'x',
+             p_pro AS CHECKBOX,
+             p_fun as CHECKBOX DEFAULT 'x',
+             p_onl as CHECKBOX.
+*-------------------------
+
+*--------------------------------------------------------------------------------*
+
+*--------------------------
+* Inicio do programa - 2° tabela
+START-OF-SELECTION.
+
+  WRITE: / 'Escola ITSO', 50 'Data:', sy-datum.
+
+  WRITE: / 'Nome do Aluno:', p_aluno,
+         / 'Nome do Curso:', p_curso.
+  skip 2.
+*-------------------------
+
+
+*-------------------------
+*Status - parte se foi aprovado ou n
+  WRITE: / 'Status'.
+  uline.
+
+  IF p_apr = 'x'.
+    WRITE: icon_checked as icon, 'Aprovado'.
+    else.
+      WRITE: icon_incomplete as ICON, 'Reprovado'.
+  ENDIF.
+
+  skip 2.
+*-------------------------
+
+
+*----------------------------
+* Disciplina - parte das diciplinas
+  WRITE: / 'Disciplinas'.
+  ULINE.
+
+  IF p_log <> space. "diferente - se tiver coisa dentro - tds os outros 'ifs' vão obdecer esse padrão
+    WRITE: / 'Lógica'.
+  ENDIF.
+
+  IF not p_pro is INITIAL.
+     WRITE: / 'Programação'.
+  ENDIF.
+
+  IF p_fun EQ 'x'.
+    WRITE: / 'Função'.
+  ENDIF.
+
+  IF p_onl NE ' '. "ne - difente
+    WRITE: / 'Online'.
+  ENDIF.
+
+end-OF-SELECTION.
+*----------------------------
+
+*---------------------------------------------------------------------------------*

@@ -1,0 +1,37 @@
+*&---------------------------------------------------------------------*
+*& Report  ZP10_EX02
+*&
+*&---------------------------------------------------------------------*
+*&
+*&
+*&---------------------------------------------------------------------*
+
+report zp10_ex02.
+
+write: / 'Estou na página:', sy-pagno.
+skip 10.
+write: / 'escrevendo'.
+uline.
+
+
+new-page. "a ney-page vai criar uma nova pagina com com o titulo do projeto junto
+write: / 'Adivinha estou na página:', sy-pagno.
+skip 10.
+write / 'escrevendo'.
+uline.
+
+new-page.
+skip 2.
+write: / 'Fim do programa - estou na pagina', sy-pagno.
+skip 2.
+uline.
+
+*------------------------------
+* Evento
+top-of-page. "colocando cabeçalho da pagina que já vem padrão, mudando
+
+ write: / 'Curso Abap',
+      60 'Data:', sy-datum,
+      90 'Horas:', sy-uzeit,
+      120 'Usúario:', sy-uname.
+uline.

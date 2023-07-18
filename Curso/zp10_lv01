@@ -9,8 +9,8 @@
 report zp10_lv01 message-id zcm10.
 
 *---------------------------------------
-*Declarações :
-* Declaração de tabela
+*DeclaraÃ§Ãµes :
+* DeclaraÃ§Ã£o de tabela
 tables: vbak. "Documento de vendas - tabela do proprio SAP - usar de exemplo
 
 * Declaracao de types - filtrando tabela - selecionando itens das tabelas
@@ -27,7 +27,7 @@ types:
 * Estrutura / workarea / header-line
 data: wa_vbak type ty_vbak.
 
-*Declaracao de tabela INTERNA - nome da 2° tabela - variacel vazia que vai armazenar td a tabela - 'loop at'
+*Declaracao de tabela INTERNA - nome da 2Â° tabela - variacel vazia que vai armazenar td a tabela - 'loop at'
 data: ti_vbak type standard table of ty_vbak.
 
 * Declaracao de uma variavel vazia
@@ -37,8 +37,8 @@ data: v_quant type i.
 *--------------------------------------
 * Tela - seleiono os tres campos
 selection-screen begin of block b01 with frame title text-001.
-"so_ - começo
-  "vbak- - até
+"so_ - comeÃ§o
+  "vbak- - atÃ©
   select-options: so_vbeln for vbak-vbeln,
                   so_erdat for vbak-erdat,
                   so_vkorg for vbak-vkorg,
@@ -49,7 +49,7 @@ selection-screen begin of block b01 with frame title text-001.
 *--------------------------------------
 
 *-------------------------------------
-* Criando classes - repartição - deixando o codigo mais bonito
+* Criando classes - repartiÃ§Ã£o - deixando o codigo mais bonito
  start-of-selection.
 
     perform acessa_dados.

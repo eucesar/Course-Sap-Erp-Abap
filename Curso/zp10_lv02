@@ -1,0 +1,200 @@
+*&---------------------------------------------------------------------*
+*& Report  ZP10_LV01
+*&
+*&---------------------------------------------------------------------*
+*&
+*&
+*&---------------------------------------------------------------------*
+
+report zp10_lv01 message-id zcm10.
+
+*---------------------------------------
+*Declarações :
+* Declaração de tabela
+tables: vbak, "Documento de vendas - tabela do proprio SAP - usar de exemplo
+        kna1.
+
+* Declaracao de types - filtrando tabela - selecionando itens das tabelas
+types:
+      begin of ty_vbak,
+         vbeln type vbak-vbeln,
+         vkorg type vbak-vkorg,
+         kunnr type vbak-kunnr,
+         erdat type vbak-erdat,
+         vkbur type vbak-vkbur,
+         vkgrp type vbak-vkgrp,
+      end of ty_vbak,
+
+      begin of ty_kna1,
+        kunnr type vbak-kunnr,"lincar uma info de uma tabela em outra
+        name1 type kna1-name1,
+      end of ty_kna1.
+
+
+
+* Estrutura / workarea / header-line
+data: wa_vbak type ty_vbak.
+
+*Declaracao de tabela INTERNA - nome da 2° tabela - variacel vazia que vai armazenar td a tabela - 'loop at'
+data: ti_vbak type standard table of ty_vbak.
+
+data: ti_kna1 type standard table of ty_kna1 with header line.
+
+data: begin of ti_saida occurs 0,
+         vbeln type vbak-vbeln,
+         vkorg type vbak-vkorg,
+         kunnr type vbak-kunnr,
+         erdat type vbak-erdat,
+         vkbur type vbak-vkbur,
+         vkgrp type vbak-vkgrp,
+         name1 type kna1-name1,
+      end of ti_saida.
+
+
+* Declaracao de uma variavel vazia
+data: v_quant type i.
+*--------------------------------------
+
+*--------------------------------------
+* Tela - seleiono os tres campos
+selection-screen begin of block b01 with frame title text-001.
+"so_ - começo
+  "vbak- - até
+  select-options: so_vbeln for vbak-vbeln,
+                  so_erdat for vbak-erdat,
+                  so_vkorg for vbak-vkorg,
+                  so_vkbur for vbak-vkbur,
+                  so_vkgrp for vbak-vkgrp.
+
+ selection-screen end of block b01.
+*--------------------------------------
+
+*-------------------------------------
+* Criando classes - repartição - deixando o codigo mais bonito
+ start-of-selection.
+
+    perform: acessa_dados,
+            processamento,
+            mostra_dados.
+
+ end-of-selection.
+
+*---------------------------------------
+ AT LINE-SELECTION. "quando a linha for selecionada
+
+   set PARAMETER ID 'AUN' FIELD ti_saida-vbeln. "MANDA PARA O CAMPO - envia NUMERO do PEDIDO para a memoria AUN
+
+   call TRANSACTION 'VA03' and skip first screen. "chama transacao e pula a primeira tela - tem q estar em letra maiscula
+*------------------------------------
+
+
+
+*&---------------------------------------------------------------------*
+*&      Form  ACESSA_DADOS
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+* Configurar se nenbum campo for prenchido, lendo oque foi posto
+form acessa_dados .
+
+
+  " Ler a tabela do banco
+    select vbeln vkorg kunnr erdat vkbur vkgrp
+    into table ti_vbak
+    from vbak
+    where vbeln in so_vbeln and
+          erdat in so_erdat and
+          vkorg in so_vkorg and
+          vkbur in so_vkbur and
+          vkgrp in so_vkgrp.
+
+
+    if sy-subrc ne 0.
+      message i000 with 'Ordem de Vendas (VBAK)'.
+      stop.
+    endif.
+
+    if not ti_vbak[] is initial."se n estiver vazia
+
+      select kunnr
+             name1
+        into table ti_kna1
+        from kna1
+        for all entries in ti_vbak
+        where kunnr eq ti_vbak-kunnr.
+
+    endif.
+
+endform.                    " ACESSA_DADOS
+
+
+
+*&---------------------------------------------------------------------*
+*&      Form  MOSTRA_DADOS
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+*Vai config dos dados - TELA da consulta - segunda tela - aonde organiza os dados
+
+form mostra_dados .
+
+  format intensified off.
+  write: / 'Ordem Venda', 15 'Org.', 25 'Cliente', 47 'Nome', 85 'Data'.
+  uline.
+
+  loop at ti_saida.
+
+    write: / ti_saida-vbeln HOTSPOT, sy-vline,
+           15 ti_saida-vkorg, sy-vline,
+           25 ti_saida-kunnr, sy-vline,
+           40 ti_saida-name1, sy-vline,
+           85 ti_saida-erdat, sy-vline.
+
+* Guarda o valor que vc clicou
+hide ti_saida-vbeln.
+
+
+    v_quant = v_quant + 1.
+ endloop.
+
+ uline.
+
+ write: / 'Form Listado(s):', v_quant, 'Pedidos'.
+
+endform.                    " MOSTRA_DADOS
+
+
+*&---------------------------------------------------------------------*
+*&      Form  PROCESSAMENTO
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+form processamento .
+
+  sort ti_kna1 by kunnr.
+
+  loop at ti_vbak INTO wa_vbak.
+
+    MOVE-CORRESPONDING wa_vbak to ti_saida.
+
+    READ TABLE ti_kna1 WITH key kunnr = wa_vbak-kunnr BINARY SEARCH.
+
+    IF sy-subrc = 0. "achou nome do cliente
+      ti_saida-name1 = ti_kna1-name1.
+
+      append ti_saida. "é como se fosse um retorn
+    ENDIF.
+
+
+  ENDLOOP.
+
+endform.                    " PROCESSAMENTO

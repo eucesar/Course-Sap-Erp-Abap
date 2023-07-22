@@ -1,0 +1,238 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZP10_LV02</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZP10_LV02</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Pesquisa em Tabelas - Varios campos</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Report  ZP10_LV01</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+
+report zp10_lv01 message-id zcm10.
+
+<font color ="#0000FF">*---------------------------------------</font>
+<font color ="#0000FF">*Declarações :</font>
+<font color ="#0000FF">* Declaração de tabela</font>
+tables: vbak, "Documento de vendas - tabela do proprio SAP - usar de exemplo
+        kna1.
+
+<font color ="#0000FF">* Declaracao de types - filtrando tabela - selecionando itens das tabelas</font>
+types:
+      begin of ty_vbak,
+         vbeln type vbak-vbeln,
+         vkorg type vbak-vkorg,
+         kunnr type vbak-kunnr,
+         erdat type vbak-erdat,
+         vkbur type vbak-vkbur,
+         vkgrp type vbak-vkgrp,
+      end of ty_vbak,
+
+      begin of ty_kna1,
+        kunnr type vbak-kunnr,"lincar uma info de uma tabela em outra
+        name1 type kna1-name1,
+      end of ty_kna1.
+
+
+
+<font color ="#0000FF">* Estrutura / workarea / header-line</font>
+data: wa_vbak type ty_vbak.
+
+<font color ="#0000FF">*Declaracao de tabela INTERNA - nome da 2° tabela - variacel vazia que vai armazenar td a tabela - 'loop at'</font>
+data: ti_vbak type standard table of ty_vbak.
+
+data: ti_kna1 type standard table of ty_kna1 with header line.
+
+data: begin of ti_saida occurs 0,
+         vbeln type vbak-vbeln,
+         vkorg type vbak-vkorg,
+         kunnr type vbak-kunnr,
+         erdat type vbak-erdat,
+         vkbur type vbak-vkbur,
+         vkgrp type vbak-vkgrp,
+         name1 type kna1-name1,
+      end of ti_saida.
+
+
+<font color ="#0000FF">* Declaracao de uma variavel vazia</font>
+data: v_quant type i.
+<font color ="#0000FF">*--------------------------------------</font>
+
+<font color ="#0000FF">*--------------------------------------</font>
+<font color ="#0000FF">* Tela - seleiono os tres campos</font>
+selection-screen begin of block b01 with frame title text-001.
+"so_ - começo
+  "vbak- - até
+  select-options: so_vbeln for vbak-vbeln,
+                  so_erdat for vbak-erdat,
+                  so_vkorg for vbak-vkorg,
+                  so_vkbur for vbak-vkbur,
+                  so_vkgrp for vbak-vkgrp.
+
+ selection-screen end of block b01.
+<font color ="#0000FF">*--------------------------------------</font>
+
+<font color ="#0000FF">*-------------------------------------</font>
+<font color ="#0000FF">* Criando classes - repartição - deixando o codigo mais bonito</font>
+ start-of-selection.
+
+    perform: acessa_dados,
+            processamento,
+            mostra_dados.
+
+ end-of-selection.
+
+<font color ="#0000FF">*---------------------------------------</font>
+ AT LINE-SELECTION. "quando a linha for selecionada
+
+   set PARAMETER ID 'AUN' FIELD ti_saida-vbeln. "MANDA PARA O CAMPO - envia NUMERO do PEDIDO para a memoria AUN
+
+   call TRANSACTION 'VA03' and skip first screen. "chama transacao e pula a primeira tela - tem q estar em letra maiscula
+<font color ="#0000FF">*------------------------------------</font>
+
+
+
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Form  ACESSA_DADOS</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*       text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+<font color ="#0000FF">*  --&gt;  p1        text</font>
+<font color ="#0000FF">*  &lt;--  p2        text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+<font color ="#0000FF">* Configurar se nenbum campo for prenchido, lendo oque foi posto</font>
+form acessa_dados .
+
+
+  " Ler a tabela do banco
+    select vbeln vkorg kunnr erdat vkbur vkgrp
+    into table ti_vbak
+    from vbak
+    where vbeln in so_vbeln and
+          erdat in so_erdat and
+          vkorg in so_vkorg and
+          vkbur in so_vkbur and
+          vkgrp in so_vkgrp.
+
+
+    if sy-subrc ne 0.
+      message i000 with 'Ordem de Vendas (VBAK)'.
+      stop.
+    endif.
+
+    if not ti_vbak[] is initial."se n estiver vazia
+
+      select kunnr
+             name1
+        into table ti_kna1
+        from kna1
+        for all entries in ti_vbak
+        where kunnr eq ti_vbak-kunnr.
+
+    endif.
+
+endform.                    " ACESSA_DADOS
+
+
+
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Form  MOSTRA_DADOS</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*       text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+<font color ="#0000FF">*  --&gt;  p1        text</font>
+<font color ="#0000FF">*  &lt;--  p2        text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+<font color ="#0000FF">*Vai config dos dados - TELA da consulta - segunda tela - aonde organiza os dados</font>
+
+form mostra_dados .
+
+  format intensified off.
+  write: / 'Ordem Venda', 15 'Org.', 25 'Cliente', 47 'Nome', 85 'Data'.
+  uline.
+
+  loop at ti_saida.
+
+    write: / ti_saida-vbeln HOTSPOT, sy-vline,
+           15 ti_saida-vkorg, sy-vline,
+           25 ti_saida-kunnr, sy-vline,
+           40 ti_saida-name1, sy-vline,
+           85 ti_saida-erdat, sy-vline.
+
+<font color ="#0000FF">* Guarda o valor que vc clicou</font>
+hide ti_saida-vbeln.
+
+
+    v_quant = v_quant + 1.
+ endloop.
+
+ uline.
+
+ write: / 'Form Listado(s):', v_quant, 'Pedidos'.
+
+endform.                    " MOSTRA_DADOS
+
+
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Form  PROCESSAMENTO</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*       text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+<font color ="#0000FF">*  --&gt;  p1        text</font>
+<font color ="#0000FF">*  &lt;--  p2        text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+form processamento .
+
+  sort ti_kna1 by kunnr.
+
+  loop at ti_vbak INTO wa_vbak.
+
+    MOVE-CORRESPONDING wa_vbak to ti_saida.
+
+    READ TABLE ti_kna1 WITH key kunnr = wa_vbak-kunnr BINARY SEARCH.
+
+    IF sy-subrc = 0. "achou nome do cliente
+      ti_saida-name1 = ti_kna1-name1.
+
+      append ti_saida. "é como se fosse um retorn
+    ENDIF.
+
+
+  ENDLOOP.
+
+endform.                    " PROCESSAMENTO
+
+<font color ="#0000FF">*Text elements</font>
+<font color ="#0000FF">*----------------------------------------------------------</font>
+<font color ="#0000FF">* 001 Seleção</font>
+
+
+<font color ="#0000FF">*Selection texts</font>
+<font color ="#0000FF">*----------------------------------------------------------</font>
+<font color ="#0000FF">* SO_ERDAT         Data de criação</font>
+<font color ="#0000FF">* SO_NAME1         Clientes :</font>
+<font color ="#0000FF">* SO_VBELN         Documento de vendas</font>
+<font color ="#0000FF">* SO_VKBUR         Escritorio de Vendas</font>
+<font color ="#0000FF">* SO_VKGRP         Equipe de Vendas</font>
+<font color ="#0000FF">* SO_VKORG         Organização</font>
+
+
+<font color ="#0000FF">*Messages</font>
+<font color ="#0000FF">*----------------------------------------------------------</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">* Message class: ZCM10</font>
+<font color ="#0000FF">*000   Dados não encontrado na tabela: &</font>
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 740
+</font>
+</body>
+</html>

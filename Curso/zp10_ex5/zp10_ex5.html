@@ -1,0 +1,71 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZP10_EX5</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZP10_EX5</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Declaração de variavel e tela</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Report  ZP10_EX5</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+
+REPORT ZP10_EX5.
+
+<font color ="#0000FF">*---------------------------</font>
+<font color ="#0000FF">* Declaração de variaveis</font>
+data: v_nome1(40) TYPE c, "Variavel tem tamanho 40 caracteres - e o nome da variavel é 'C' - ent n é nd, mas posso nomer com alguma função no type
+      v_cliente    TYPE ad_name1,   "Elemento de dados tem. 40
+      v_nome2      TYPE kna1-name1, "kna1 - adicionar nome
+      v_nome3       TYPE kna1-name1.
+      "v_nome4       TYPE  v_nome1. - o v_nome 4 é uma variavel sem uso e vazia
+
+data: v_data1 TYPE datum,
+      v_data2 TYPE sy-datum,
+      v_data3 TYPE j_1bnfdoc-docdat,
+      v_data4 TYPE datum.
+
+DATA: v_hora1 TYPE t,
+      v_hora2 TYPE sy-uzeit.
+
+<font color ="#0000FF">*--------------------------</font>
+<font color ="#0000FF">* Inicio de programa</font>
+start-of-SELECTION.
+
+  v_nome1 = 'ITSO Consultoria'.
+  move 'Treinamento' TO v_nome2. "duas formas se fazer oque estava em cima
+
+  CONCATENATE v_nome1 '-' v_nome2 into v_nome3 SEPARATED BY space. "junta tudo em uma variavel só
+  "v_nome3 = v_nome1 + '-' + v_nome2 - separado por espaço : COMO SE FOSSE
+
+  WRITE: / 'Nome completo:', v_nome3.
+  skip.
+
+  v_data1 = sy-datum.
+  v_data2 = v_data1 + 30.
+  v_data3 = v_data1 - 30.
+
+  WRITE: / 'Data 1:', v_data1,
+         / 'Data 2:', v_data2,
+         / 'Data 3:', v_data3.
+
+<font color ="#0000FF">* Preenchendo horas</font>
+  v_hora1 = sy-uzeit.
+  v_hora2 = v_hora1.
+
+  WRITE: / 'Hora:', v_hora2.
+
+  end-of-SELECTION.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 740
+</font>
+</body>
+</html>

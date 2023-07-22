@@ -1,0 +1,50 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZP10_EX3</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZP10_EX3</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Tipos de Escritas</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Report  ZP10_EX3</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+
+REPORT ZP10_EX3.
+
+<font color ="#0000FF">*-------------</font>
+WRITE: / 'Escrita normal do ABAP'.
+<font color ="#0000FF">*-------------</font>
+
+<font color ="#0000FF">*-----------</font>
+FORMAT INTENSIFIED off. "desativa a escrita padrao e coloca em negrito - mudar o formato, uso format
+
+WRITE: / 'Escrita em negrito'.
+<font color ="#0000FF">*-----------</font>
+
+<font color ="#0000FF">*-----------------</font>
+FORMAT color  1. "azul - quando muda a cor, ela abre a fecha
+
+    WRITE: / 'Escriat em azul'.
+
+FORMAT color off.
+<font color ="#0000FF">*---------------</font>
+
+<font color ="#0000FF">*--------------</font>
+FORMAT INTENSIFIED on. "ON
+
+WRITE: / 'Voltando a Escrita Normal'.
+<font color ="#0000FF">*-------------</font>
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 740
+</font>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZP10_UDM</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZP10_UDM</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Verifica o ultimo dia do mes</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Report  ZP10_UDM</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+
+REPORT ZP10_UDM MESSAGE-ID zcm20.
+
+<font color ="#0000FF">*---------------</font>
+<font color ="#0000FF">* Variavel</font>
+data: v_lastday TYPE d.
+<font color ="#0000FF">*--------------</font>
+
+<font color ="#0000FF">*---------------</font>
+<font color ="#0000FF">* Tela - 1° tabela</font>
+PARAMETERS: p_data TYPE d.
+<font color ="#0000FF">*---------------</font>
+
+<font color ="#0000FF">*--------------</font>
+<font color ="#0000FF">* Inicio do programa - 2° tabela</font>
+START-OF-SELECTION.
+
+        call function 'RP_LAST_DAY_OF_MONTHS'
+        exporting
+        day_in                  = p_data
+        IMPORTING
+        LAST_DAY_OF_MONTH       = v_lastday
+        EXCEPTIONS
+        DAY_IN_NO_DATE          = 1
+        OTHERS                  = 2.
+                        .
+        if sy-subrc &lt;&gt; 0.
+          MESSAGE e001 WITH 'Erro na função'.
+
+        else.
+          MESSAGE i001 WITH 'Ultimo dia do mes e' v_lastday.
+        endif.
+
+
+end-of-SELECTION.
+<font color ="#0000FF">*-------------</font>
+
+
+<font color ="#0000FF">*Selection texts</font>
+<font color ="#0000FF">*----------------------------------------------------------</font>
+<font color ="#0000FF">* P_DATA         Digite a Data :</font>
+
+
+<font color ="#0000FF">*Messages</font>
+<font color ="#0000FF">*----------------------------------------------------------</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">* Message class: ZCM20</font>
+<font color ="#0000FF">*001</font>
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 740
+</font>
+</body>
+</html>

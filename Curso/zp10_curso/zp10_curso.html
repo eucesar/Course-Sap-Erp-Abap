@@ -1,0 +1,132 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZP10_CURSO</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZP10_CURSO</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  criação de duas telas</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Report  ZP10_CURSO</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+
+REPORT ZP10_CURSO.
+
+<font color ="#0000FF">*---------------------------</font>
+<font color ="#0000FF">*telas de selecao - 1° tabela</font>
+
+<font color ="#0000FF">*--------------------------</font>
+<font color ="#0000FF">*primeira tabela - escrever</font>
+SELECTION-SCREEN BEGIN OF block b01 WITH FRAME TITLE text-001.
+
+PARAMETERS: p_aluno(50) TYPE c OBLIGATORY, "vai armazenar na variavel quando o usuario colocar
+            p_curso(30) TYPE c OBLIGATORY DEFAULT 'Acadeia Abap'.
+
+SELECTION-SCREEN end of BLOCK b01.
+<font color ="#0000FF">*-------------------------</font>
+
+
+<font color ="#0000FF">*--------------------------</font>
+<font color ="#0000FF">*segunda tela - selecionar btns</font>
+SELECTION-SCREEN BEGIN OF BLOCK b02 WITH FRAME TITLE text-002.
+
+<font color ="#0000FF">*parametro radiobutton - bolinha redonda para selecionar - tem que AGRUPAR - GROUP</font>
+  PARAMETERS: p_apr RADIOBUTTON GROUP g1,
+              p_rep RADIOBUTTON GROUP g1 DEFAULT 'X'. "significa que já vai vir com esse parametro marcado - o 'x' tem q ser em maisculo - acostumar com isso
+
+SELECTION-SCREEN end of BLOCK b02.
+<font color ="#0000FF">*--------------------------</font>
+
+
+<font color ="#0000FF">*-------------------------</font>
+<font color ="#0000FF">*parametros fora - do 'selection-screnn'</font>
+PARAMETERS : p_log as CHECKBOX DEFAULT 'x',
+             p_pro AS CHECKBOX,
+             p_fun as CHECKBOX DEFAULT 'x',
+             p_onl as CHECKBOX.
+<font color ="#0000FF">*-------------------------</font>
+
+<font color ="#0000FF">*--------------------------------------------------------------------------------*</font>
+
+<font color ="#0000FF">*--------------------------</font>
+<font color ="#0000FF">* Inicio do programa - 2° tabela</font>
+START-OF-SELECTION.
+
+  WRITE: / 'Escola ITSO', 50 'Data:', sy-datum.
+
+  WRITE: / 'Nome do Aluno:', p_aluno,
+         / 'Nome do Curso:', p_curso.
+  skip 2.
+<font color ="#0000FF">*-------------------------</font>
+
+
+<font color ="#0000FF">*-------------------------</font>
+<font color ="#0000FF">*Status - parte se foi aprovado ou n</font>
+  WRITE: / 'Status'.
+  uline.
+
+  IF p_apr = 'x'.
+    WRITE: icon_checked as icon, 'Aprovado'.
+    else.
+      WRITE: icon_incomplete as ICON, 'Reprovado'.
+  ENDIF.
+
+  skip 2.
+<font color ="#0000FF">*-------------------------</font>
+
+
+<font color ="#0000FF">*----------------------------</font>
+<font color ="#0000FF">* Disciplina - parte das diciplinas</font>
+  WRITE: / 'Disciplinas'.
+  ULINE.
+
+  IF p_log &lt;&gt; space. "diferente - se tiver coisa dentro - tds os outros 'ifs' vão obdecer esse padrão
+    WRITE: / 'Lógica'.
+  ENDIF.
+
+  IF not p_pro is INITIAL.
+     WRITE: / 'Programação'.
+  ENDIF.
+
+  IF p_fun EQ 'x'.
+    WRITE: / 'Função'.
+  ENDIF.
+
+  IF p_onl NE ' '. "ne - difente
+    WRITE: / 'Online'.
+  ENDIF.
+
+end-OF-SELECTION.
+<font color ="#0000FF">*----------------------------</font>
+
+<font color ="#0000FF">*---------------------------------------------------------------------------------*</font>
+
+<font color ="#0000FF">*Text elements</font>
+<font color ="#0000FF">*----------------------------------------------------------</font>
+<font color ="#0000FF">* 001 Informe</font>
+<font color ="#0000FF">* 002 Status</font>
+
+
+<font color ="#0000FF">*Selection texts</font>
+<font color ="#0000FF">*----------------------------------------------------------</font>
+<font color ="#0000FF">* P_ALUNO         Aluno</font>
+<font color ="#0000FF">* P_APR         Aprovado</font>
+<font color ="#0000FF">* P_CURSO         Curso</font>
+<font color ="#0000FF">* P_FUN         Função</font>
+<font color ="#0000FF">* P_LOG         Logica</font>
+<font color ="#0000FF">* P_ONL         Online</font>
+<font color ="#0000FF">* P_PRO         Programação</font>
+<font color ="#0000FF">* P_REP         Reprovado</font>
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 740
+</font>
+</body>
+</html>

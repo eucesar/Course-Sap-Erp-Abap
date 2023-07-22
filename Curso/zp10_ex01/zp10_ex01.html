@@ -1,0 +1,52 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZP10_EX01</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZP10_EX01</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Hello word - escrita</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Report  ZP10_EX01</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+
+REPORT ZP10_EX01.
+
+WRITE: / 'Meu primeiro programa',
+         'no curso Abap'. "a barra pula uma linha de cima - se colocar um numero do lado vai mudar a coluna
+
+skip. "Pula uma linha
+
+WRITE: / 'Estou na linha 3'."uma barra so pula uma liha
+
+WRITE: /20 'Escrevendo a partir da coluna 20'. "pula 20 colunas - e 1 linha
+
+<font color ="#0000FF">* comando abaixo, vai escrever na coluna 30 com elemento texto e por data servidor</font>
+WRITE: /30 text-001, sy-datum.
+
+WRITE: / text-002, sy-uname. "login
+
+uline. "linha horizontal
+
+WRITE: / 'Fim do programa'.
+
+skip 2. "pula 2 linha
+uline 10(30). "começa na coluna 10 e fasz risco de 30 e para
+
+<font color ="#0000FF">*Text elements</font>
+<font color ="#0000FF">*----------------------------------------------------------</font>
+<font color ="#0000FF">* 001 Data :</font>
+<font color ="#0000FF">* 002 Nome :</font>
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 740
+</font>
+</body>
+</html>

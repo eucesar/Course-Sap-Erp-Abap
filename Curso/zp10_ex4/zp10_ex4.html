@@ -1,0 +1,38 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZP10_EX4</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZP10_EX4</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  tabela com mudança de cores</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Report  ZP10_EX4</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+
+REPORT ZP10_EX4.
+
+DATA: lt_colors TYPE TABLE OF string.
+
+APPEND 'Red' TO lt_colors.
+APPEND 'Green' TO lt_colors.
+APPEND 'Blue' TO lt_colors.
+APPEND 'Yellow' TO lt_colors.
+APPEND 'Orange' TO lt_colors.
+
+LOOP AT lt_colors INTO DATA(ls_color).
+  WRITE: / ls_color.
+ENDLOOP.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 740
+</font>
+</body>
+</html>

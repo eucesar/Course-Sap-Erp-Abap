@@ -1,0 +1,165 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZP10_LV03</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZP10_LV03</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Lista de Vendas - INNER JOIN</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Report  ZP10_LV03</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+
+report zp10_lv03 message-id zcm10.
+
+<font color ="#0000FF">*---------------------------------------</font>
+<font color ="#0000FF">* Declarações :</font>
+<font color ="#0000FF">* Declaração de tabela- 1°</font>
+tables: vbak, "Documento sw vendas: dados de cabecalho
+        kna1. "Mestre de clientes (parte geral)
+
+<font color ="#0000FF">*Declaracao types - 2° - 1* pegar toda a estrutura do filtro da tabela</font>
+TYPES: BEGIN OF ty_vendas,
+       vbeln TYPE vbak-vbeln,
+       vkorg TYPE vbak-vbeln,
+       kunnr type vbak-kunnr,
+       erdat type vbak-erdat,
+       name1 type kna1-name1,
+  end of ty_vendas.
+
+<font color ="#0000FF">* Tabela INTERNA - 3° - 2° separ a tabela interna para que a tabela interna use nas telas dps</font>
+DATA: TI_VENDAS TYPE STANDARD TABLE OF TY_VENDAS WITH HEADER LINE.
+
+<font color ="#0000FF">*Variaveis</font>
+data: v_quant TYPE i.
+<font color ="#0000FF">*----------------------------------</font>
+
+<font color ="#0000FF">*----------------------------------</font>
+<font color ="#0000FF">* Tela</font>
+SELECTION-SCREEN begin of BLOCK b01 WITH FRAME TITLE text-001.
+
+    PARAMETERS:   p_vkorg TYPE vbak-vkorg OBLIGATORY DEFAULT '1000'.
+
+    SELECT-OPTIONS: so_vbeln for vbak-vbeln,
+                    so_erdat for vbak-erdat.
+
+SELECTION-SCREEN end of BLOCK b01.
+<font color ="#0000FF">*------------------------------------</font>
+
+<font color ="#0000FF">*------------------------------------------------------</font>
+<font color ="#0000FF">* Inicio do programa - criando classes</font>
+START-OF-SELECTION.
+
+PERFORM: acessa_dados,
+        mostraa_dados.
+
+end-OF-SELECTION.
+
+<font color ="#0000FF">*Evento - aode eu clico no 1° campo e me manda para outro</font>
+AT LINE-SELECTION.
+
+  set PARAMETER ID 'AUN' FIELD ti_vendas-vbeln. "aonde esta o hotspot
+
+  call TRANSACTION 'VA03' AND SKIP FIRST SCREEN.
+<font color ="#0000FF">*------------------------------------------------------</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Form  ACESSA_DADOS</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*       text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+<font color ="#0000FF">*  --&gt;  p1        text</font>
+<font color ="#0000FF">*  &lt;--  p2        text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+form acessa_dados .
+
+  "SQL
+
+    SELECT vbak~vbeln vbak~vkorg vbak~kunnr vbak~erdat  "VBAK
+            kna1~name1                   "KNA1
+
+     into TABLE ti_vendas
+
+      from  vbak as vbak "estou declarando oq esta a esquerda do ' ~ '
+
+      INNER JOIN kna1 as kna1 " ' ~ '
+      on vbak~kunnr eq kna1~kunnr " uso o iner join para usar um campo igual na vbak e na kna1 - para linkar uma na outra
+
+      where vbak~vkorg eq p_vkorg and "pegar oq vai aparecer na 1° tela - uso o 'eq' pq  é um campo so
+            vbak~vbeln in so_vbeln and
+            vbak~erdat in so_erdat.
+
+      "mensagem de erro
+      if sy-subrc &lt;&gt; 0.
+        MESSAGE i000 WITH 'Vendas'.
+        stop.
+        ENDIF.
+
+endform.                    " ACESSA_DADOS
+
+include <a href ="zp10_lv03_mostra_dadosf01.html">zp10_lv03_mostra_dadosf01</a>.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Form  MOSTRAA_DADOS</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*       text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+<font color ="#0000FF">*  --&gt;  p1        text</font>
+<font color ="#0000FF">*  &lt;--  p2        text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+form mostraa_dados .
+
+"Segunda tabela
+format intensified off.
+  write: / 'n. da ov.', 15 'Org.', 30 'Cliente', 45 'Nome do Cliente', 80 'Data'.
+  uline.
+
+    loop at ti_vendas. "uso a tabela interna para aparecer os itens - para mostrar os dados uso tabela interna
+
+    write: / ti_vendas-vbeln HOTSPOT, sy-vline,
+            ti_vendas-vkorg, sy-vline, "n preciso por quantidade de espaçõs
+            ti_vendas-kunnr, sy-vline,
+            ti_vendas-name1, sy-vline,
+            ti_vendas-erdat, sy-vline.
+
+    " Guarda o valor que vc clicou - aonde eu coloquei o hotspot
+     hide ti_vendas.
+
+     add 1 to v_quant. "msm coisa que v_quant ++ - rodar item por item na tabela
+
+ endloop.
+
+ uline.
+
+ write: / 'Form Listado(s):', v_quant, 'Pedidos'.
+
+endform.                    " MOSTRAA_DADOS
+
+<font color ="#0000FF">*Text elements</font>
+<font color ="#0000FF">*----------------------------------------------------------</font>
+<font color ="#0000FF">* 001 Informe</font>
+
+
+<font color ="#0000FF">*Selection texts</font>
+<font color ="#0000FF">*----------------------------------------------------------</font>
+<font color ="#0000FF">* P_VKORG D       .</font>
+<font color ="#0000FF">* SO_ERDAT D       .</font>
+<font color ="#0000FF">* SO_VBELN D       .</font>
+
+
+<font color ="#0000FF">*Messages</font>
+<font color ="#0000FF">*----------------------------------------------------------</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">* Message class: ZCM10</font>
+<font color ="#0000FF">*000   Dados não encontrado na tabela: &</font>
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 740
+</font>
+</body>
+</html>

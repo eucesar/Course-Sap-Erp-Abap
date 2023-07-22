@@ -1,0 +1,75 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZP10_NASC</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZP10_NASC</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Calcula numero de dias de nascimento</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Report  ZP10_NASC</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+
+REPORT ZP10_NASC MESSAGE-ID i000.
+
+<font color ="#0000FF">*--------------------------</font>
+<font color ="#0000FF">* Variavel</font>
+data: v_ndias TYPE i.
+
+<font color ="#0000FF">*--------------------------</font>
+<font color ="#0000FF">* Tela</font>
+PARAMETERS: p_nasc TYPE sy-datum.
+
+<font color ="#0000FF">*--------------------------</font>
+<font color ="#0000FF">* Inicio do programa</font>
+START-OF-SELECTION.
+
+call function 'ZMF10_CALC_DATA'
+  exporting
+    datai         = P_NASC
+    dataf         = sy-datum
+ IMPORTING
+   NDIAS         = v_ndias
+ EXCEPTIONS
+   EDATA1        = 1
+   EDATA2        = 2
+   EDATA3        = 3
+   OTHERS        = 4.
+
+  case sy-subrc.
+    when 0.
+      MESSAGE i000 with 'Voce viveu:' v_ndias 'dias'.
+    when 1.
+        WRITE: / 'Data de nasvimento, não foi informado'.
+    WHEN 3.
+         WRITE: / 'Voce ainda não nasceu'.
+
+    when OTHERS.
+      ENDCASE.
+
+end-of-SELECTION.
+
+
+<font color ="#0000FF">*Selection texts</font>
+<font color ="#0000FF">*----------------------------------------------------------</font>
+<font color ="#0000FF">* P_NASC         Data de nascimento :</font>
+
+
+<font color ="#0000FF">*Messages</font>
+<font color ="#0000FF">*----------------------------------------------------------</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">* Message class: I000</font>
+<font color ="#0000FF">*000</font>
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 740
+</font>
+</body>
+</html>
